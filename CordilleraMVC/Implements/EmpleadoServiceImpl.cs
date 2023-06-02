@@ -3,6 +3,7 @@ using CordilleraMVC.Repository;
 using CordilleraMVC.Services;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -20,62 +21,121 @@ namespace CordilleraMVC.Implements
             this.empleadoRepository = empleadoRepository;
         }
 
-        public bool ActualizarEmpleado(Empleado empleado)
+        public bool ActualizarEmpleado()
         {
             try
             {
-                empleadoRepository.ActualizarEmpleado(empleado);
+                empleadoRepository.Guardar();
                 return true;
             }
-            catch
+            catch (DataException)
             {
+                modelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente, y si el error persiste contacte al administrador.");
                 return false;
-            }
+            }            
         }
 
         public void BorrarEmpleado(int id)
         {
-            throw new NotImplementedException();
+            empleadoRepository.BorrarEmpleado(id);
         }
 
         public Empleado BuscarPorId(int id)
         {
-            throw new NotImplementedException();
+            return empleadoRepository.BuscarPorId(id);
         }
 
         public List<Empleado> BuscarPorNombre(string nombre)
         {
-            throw new NotImplementedException();
+            List<Empleado> empleadosPorNombre = null;
+            if (!String.IsNullOrEmpty(nombre))
+            {
+                empleadosPorNombre = empleadoRepository.BuscarPorNombre(nombre);
+            }
+            return empleadosPorNombre;
         }
 
         public void Guardar()
         {
-            throw new NotImplementedException();
+            empleadoRepository.Guardar();
         }
 
         public bool GuardarEmpleado(Empleado empleado)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (modelState.IsValid)
+                {
+                    empleadoRepository.GuardarEmpleado(empleado);
+                }
+                return true;
+            }
+            catch (DataException)
+            {
+                modelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente, y si el error persiste contacte al administrador.");
+                return false;
+            }
         }
 
-        public List<Empleado> ListarEmpleados()
+        public IEnumerable<Empleado> ListaEmpleados()
         {
-            throw new NotImplementedException();
+            return empleadoRepository.ListarEmpleados();
         }
 
-        public List<Empleado> ListarEmpleadosPag(int numeroPagina, int tamañoPaginas)
+        public List<Empleado> ListarEmpleadosPag(string filtroActual, string nombreBusqueda, int? pagina)
         {
-            throw new NotImplementedException();
+            int tamañoPaginas = 3;
+            int numeroPaginas = (pagina ?? 1);
+            if(nombreBusqueda != null)
+            {
+                pagina = 1;
+            }
+            else
+            {
+                this.AsignacionString(filtroActual, nombreBusqueda);
+            }
+            return empleadoRepository.ListarEmpleadosPag(numeroPaginas, tamañoPaginas);
         }
 
-        public List<Empleado> OrdenDesc(int numero)
+        public List<Empleado> PorOrden(string ordenSort)
         {
-            throw new NotImplementedException();
+            List<Empleado> lista;
+            int numero;
+            if (ordenSort.Equals("nombre_desc"))
+            {
+                numero = 1;
+                lista = empleadoRepository.PorOrden(numero);
+            }
+            else if (ordenSort.Equals("cargo_desc"))
+            {
+                numero = 2;
+                lista = empleadoRepository.PorOrden(numero);
+            }
+            else if (ordenSort.Equals("Cargo"))
+            {
+                numero = 3;
+                lista = empleadoRepository.PorOrden(numero);
+            }
+            else
+            {
+                numero = 4;
+                lista = empleadoRepository.PorOrden(numero);
+            }
+            return lista;
         }
 
-        public List<Empleado> PorOrden(int numero)
+        public string AsignacionString(string filtroActual, string nombreBusqueda)
         {
-            throw new NotImplementedException();
+            if(nombreBusqueda == null)
+            {
+                nombreBusqueda = filtroActual;
+            }
+            return nombreBusqueda;
         }
+
+        /*private bool TryUpdateModel(Empleado empleado, string valor, string[] datosEmpleado)
+        {
+            return TryUpdateModel(empleado, valor, datosEmpleado);
+        }*/
     }
 }

@@ -9,7 +9,7 @@ namespace CordilleraMVC.Data
 {
     public interface ICordilleraContext
     {
-        DbSet<Usuario> Usuarios { get; set; }
+        DbSet<Cliente> Clientes { get; set; }
         DbSet<Empleado> Empleados { get; set; }
         DbSet<Producto> Productos { get; set; }
         DbSet<Orden> Ordenes { get; set; }

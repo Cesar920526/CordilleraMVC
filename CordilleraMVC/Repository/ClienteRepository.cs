@@ -6,24 +6,24 @@ using System.Web;
 
 namespace CordilleraMVC.Repository
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class ClienteRepository : IClienteRepository
     {
-        public void ActualizarUsuario(Usuario usuario)
+        public void ActualizarCliente(Cliente cliente)
         {
             throw new NotImplementedException();
         }
 
-        public void BorrarUsuario(int id)
+        public void BorrarCliente(int id)
         {
             throw new NotImplementedException();
         }
 
-        public Usuario BuscarPorId(int id)
+        public Cliente BuscarPorId(int id)
         {
             throw new NotImplementedException();
         }
 
-        public List<Usuario> BuscarPorNombre(string nombre)
+        public List<Cliente> BuscarPorNombre(string nombre)
         {
             throw new NotImplementedException();
         }
@@ -33,27 +33,27 @@ namespace CordilleraMVC.Repository
             throw new NotImplementedException();
         }
 
-        public void GuardarUsuario(Usuario usuario)
+        public void GuardarCliente(Cliente cliente)
         {
             throw new NotImplementedException();
         }
 
-        public List<Usuario> ListarUsuarios()
+        public List<Cliente> ListarClientes()
         {
             throw new NotImplementedException();
         }
 
-        public List<Usuario> ListarUsuariosPag(int numeroPagina, int tamañoPaginas)
+        public List<Cliente> ListarClientesPag(int numeroPagina, int tamañoPaginas)
         {
             throw new NotImplementedException();
         }
 
-        public List<Usuario> OrdenDesc(int numero)
+        public List<Cliente> OrdenDesc(int numero)
         {
             throw new NotImplementedException();
         }
 
-        public List<Usuario> PorOrden(int numero)
+        public List<Cliente> PorOrden(int numero)
         {
             throw new NotImplementedException();
         }

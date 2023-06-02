@@ -13,8 +13,9 @@ namespace CordilleraMVC.Implements
         private ModelStateDictionary modelState;
         private IOrdenRepository ordenRepository;
 
-        public OrdenServiceImpl(IOrdenRepository ordenRepository)
+        public OrdenServiceImpl(ModelStateDictionary modelState, IOrdenRepository ordenRepository)
         {
+            this.modelState = modelState;
             this.ordenRepository = ordenRepository;
         }
     }

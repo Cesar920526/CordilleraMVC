@@ -6,6 +6,7 @@ using System;
 using System.Web.Mvc;
 using Unity;
 using Unity.AspNet.Mvc;
+using Unity.Lifetime;
 
 namespace CordilleraMVC
 {
@@ -53,18 +54,16 @@ namespace CordilleraMVC
         {
             UnityContainer unityContainer = new UnityContainer();
 
-            //Context
-            unityContainer.RegisterType<ICordilleraContext, CordilleraContext>();
             //Repository
-            unityContainer.RegisterType<IEmpleadoRepository, EmpleadoRepository>();
-            unityContainer.RegisterType<IUsuarioRepository, UsuarioRepository>();
-            unityContainer.RegisterType<IProductoRepository, ProductoRepository>();
-            unityContainer.RegisterType<IOrdenRepository, OrdenRepository>();
+            unityContainer.RegisterType<IEmpleadoRepository, EmpleadoRepository>(new HierarchicalLifetimeManager());
+            unityContainer.RegisterType<IClienteRepository, ClienteRepository>(new HierarchicalLifetimeManager());
+            unityContainer.RegisterType<IProductoRepository, ProductoRepository>(new HierarchicalLifetimeManager());
+            unityContainer.RegisterType<IOrdenRepository, OrdenRepository>(new HierarchicalLifetimeManager());
             //Service
-            unityContainer.RegisterType<IEmpleadoService, EmpleadoServiceImpl>();
-            unityContainer.RegisterType<IUsuarioService, UsuarioServiceImpl>();
-            unityContainer.RegisterType<IProductoService, ProductoServiceImpl>();
-            unityContainer.RegisterType<IOrdenService, OrdenServiceImpl>();
+            unityContainer.RegisterType<IEmpleadoService, EmpleadoServiceImpl>(new HierarchicalLifetimeManager());
+            unityContainer.RegisterType<IClienteService, ClienteServiceImpl>(new HierarchicalLifetimeManager());
+            unityContainer.RegisterType<IProductoService, ProductoServiceImpl>(new HierarchicalLifetimeManager());
+            unityContainer.RegisterType<IOrdenService, OrdenServiceImpl>(new HierarchicalLifetimeManager());
 
             DependencyResolver.SetResolver(new UnityDependencyResolver(unityContainer));
         }

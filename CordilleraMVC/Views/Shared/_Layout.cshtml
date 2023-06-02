@@ -19,6 +19,10 @@
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
                     <li>@Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Ordenes", "Order", "Orden", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Productos", "Product", "Producto", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Clientes", "Person", "Cliente", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Empleados", "Index", "Empleado", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Acerca de", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contacto", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                 </ul>

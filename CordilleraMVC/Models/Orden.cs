@@ -21,9 +21,9 @@ namespace CordilleraMVC.Models
         [ForeignKey("EmpleadoId")]
         public virtual Empleado Empleado { get; set; }
         [Required]
-        public int UsuarioId { get; set; }
-        [ForeignKey("UsuarioId")]
-        public virtual Usuario Usuario { get; set; }
+        public int ClienteId { get; set; }
+        [ForeignKey("ClienteId")]
+        public virtual Cliente Cliente { get; set; }
         public virtual ICollection<Producto> Productos { get; set; }
     }
 }

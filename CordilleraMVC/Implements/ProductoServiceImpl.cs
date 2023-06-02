@@ -13,8 +13,9 @@ namespace CordilleraMVC.Implements
         private ModelStateDictionary modelState;
         private IProductoRepository productoRepository;
 
-        public ProductoServiceImpl(IProductoRepository productoRepository)
+        public ProductoServiceImpl(ModelStateDictionary modelState, IProductoRepository productoRepository)
         {
+            this.modelState = modelState;
             this.productoRepository = productoRepository;
         }
     }

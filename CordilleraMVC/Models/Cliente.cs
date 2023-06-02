@@ -7,11 +7,11 @@ using System.Web;
 
 namespace CordilleraMVC.Models
 {
-    public class Usuario
+    public class Cliente
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int EmpleadoId { get; set; }
+        public int ClienteId { get; set; }
         [Required]
         [StringLength(50)]
         public string Nombre { get; set; }
@@ -31,6 +31,6 @@ namespace CordilleraMVC.Models
         [Required]
         [StringLength(30)]
         public string Ciudad { get; set; }
-        public virtual ICollection<Orden> Ordenews { get; set; }
+        public virtual ICollection<Orden> Ordenes { get; set; }
     }
 }

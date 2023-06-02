@@ -57,9 +57,9 @@ namespace CordilleraMVC.Repository
             cordilleraContext.SaveChanges();
         }
 
-        public List<Empleado> ListarEmpleados()
+        public IEnumerable<Empleado> ListarEmpleados()
         {
-            return cordilleraContext.Empleados.ToList();
+            return cordilleraContext.Empleados;
         }
 
         public List<Empleado> ListarEmpleadosPag(int numeroPagina, int tamañoPaginas)
@@ -68,30 +68,24 @@ namespace CordilleraMVC.Repository
             return (List<Empleado>)ListEmpleados.ToList().ToPagedList(numeroPagina, tamañoPaginas);
         }
 
-        public List<Empleado> OrdenDesc(int numero)
+        public List<Empleado> PorOrden(int numero)
         {
             IEnumerable<Empleado> ListEmpleados = from e in cordilleraContext.Empleados select e;
             if(numero == 1)
             {
                 ListEmpleados = ListEmpleados.OrderByDescending(e => e.Apellido);
             }
-            if(numero == 2)
+            else if(numero == 2)
             {
                 ListEmpleados = ListEmpleados.OrderByDescending(e => e.Cargo);
             }
-            return ListEmpleados.ToList();
-        }
-
-        public List<Empleado> PorOrden(int numero)
-        {
-            IEnumerable<Empleado> ListEmpleados = from e in cordilleraContext.Empleados select e;
-            if (numero == 1)
-            {
-                ListEmpleados = ListEmpleados.OrderBy(e => e.Apellido);
-            }
-            if (numero == 2)
+            else if(numero == 3)
             {
                 ListEmpleados = ListEmpleados.OrderBy(e => e.Cargo);
+            }
+            else if(numero == 4)
+            {
+                ListEmpleados = ListEmpleados.OrderBy(e => e.Apellido);
             }
             return ListEmpleados.ToList();
         }
