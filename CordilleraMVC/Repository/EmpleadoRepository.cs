@@ -12,7 +12,12 @@ namespace CordilleraMVC.Repository
 {
     public class EmpleadoRepository : IEmpleadoRepository, IDisposable
     {
-        private CordilleraContext cordilleraContext = new CordilleraContext();
+        private CordilleraContext cordilleraContext;
+
+        public EmpleadoRepository(CordilleraContext cordilleraContext)
+        {
+            this.cordilleraContext = cordilleraContext;
+        }
 
         public void ActualizarEmpleado(Empleado empleado)
         {

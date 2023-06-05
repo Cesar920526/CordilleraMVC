@@ -6,7 +6,7 @@ using System.Web;
 
 namespace CordilleraMVC.Repository
 {
-    public class OrdenRepository : IOrdenRepository
+    public class OrdenRepository : IOrdenRepository, IDisposable
     {
         public void ActualizarOrden(Orden orden)
         {
@@ -19,6 +19,11 @@ namespace CordilleraMVC.Repository
         }
 
         public Orden BuscarOrdenPorId(int id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }

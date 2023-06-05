@@ -6,7 +6,7 @@ using System.Web;
 
 namespace CordilleraMVC.Repository
 {
-    public class ClienteRepository : IClienteRepository
+    public class ClienteRepository : IClienteRepository, IDisposable
     {
         public void ActualizarCliente(Cliente cliente)
         {
@@ -24,6 +24,11 @@ namespace CordilleraMVC.Repository
         }
 
         public List<Cliente> BuscarPorNombre(string nombre)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }

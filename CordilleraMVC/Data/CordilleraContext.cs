@@ -8,7 +8,7 @@ using System.Web;
 
 namespace CordilleraMVC.Data
 {
-    public class CordilleraContext : DbContext
+    public class CordilleraContext : DbContext, ICordilleraContext
     {
         public DbSet<Cliente> Clientes { get; set; }
         public DbSet<Empleado> Empleados { get; set; }

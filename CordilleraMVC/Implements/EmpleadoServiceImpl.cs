@@ -12,16 +12,14 @@ namespace CordilleraMVC.Implements
 {
     public class EmpleadoServiceImpl : IEmpleadoService
     {
-        private ModelStateDictionary modelState;
         private IEmpleadoRepository empleadoRepository;
 
-        public EmpleadoServiceImpl(ModelStateDictionary modelState, IEmpleadoRepository empleadoRepository)
+        public EmpleadoServiceImpl(IEmpleadoRepository empleadoRepository)
         {
-            this.modelState = modelState;
             this.empleadoRepository = empleadoRepository;
         }
 
-        public bool ActualizarEmpleado()
+        public bool ActualizarEmpleado(ModelStateDictionary modelState)
         {
             try
             {
@@ -60,7 +58,7 @@ namespace CordilleraMVC.Implements
             empleadoRepository.Guardar();
         }
 
-        public bool GuardarEmpleado(Empleado empleado)
+        public bool GuardarEmpleado(Empleado empleado, ModelStateDictionary modelState)
         {
             try
             {
@@ -77,9 +75,10 @@ namespace CordilleraMVC.Implements
             }
         }
 
-        public IEnumerable<Empleado> ListaEmpleados()
+        public List<Empleado> ListaEmpleados()
         {
-            return empleadoRepository.ListarEmpleados();
+            IEnumerable<Empleado> empleados = empleadoRepository.ListarEmpleados();
+            return empleados.ToList();
         }
 
         public List<Empleado> ListarEmpleadosPag(string filtroActual, string nombreBusqueda, int? pagina)

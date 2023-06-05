@@ -5,7 +5,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Details</h2>
+<h2>Detalles empleado</h2>
 
 <div>
     <h4>Empleado</h4>
@@ -50,10 +50,31 @@
         <dd>
             @Html.DisplayFor(model => model.Cargo)
         </dd>
-
+        <dt>
+            @Html.DisplayNameFor(model => model.Ordenes)
+        </dt>
+        <dd>
+            <table class="table">
+                <tr>
+                    <th>Numero Factura</th>
+                    <th>Fecha Factura</th>
+                </tr>
+                @foreach (var item in Model.Ordenes)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.OrdenId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Fecha)
+                        </td>
+                    </tr>
+                }
+            </table>
+        </dd>
     </dl>
 </div>
 <p>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.EmpleadoId }) |
-    @Html.ActionLink("Back to List", "Index")
+    @Html.ActionLink("Editar", "Edit", new { id = Model.EmpleadoId }) |
+    @Html.ActionLink("Regresar a la lista", "Index")
 </p>

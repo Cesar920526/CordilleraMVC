@@ -3,6 +3,7 @@ using CordilleraMVC.Implements;
 using CordilleraMVC.Repository;
 using CordilleraMVC.Services;
 using System;
+using System.Data.Entity;
 using System.Web.Mvc;
 using Unity;
 using Unity.AspNet.Mvc;
@@ -48,24 +49,21 @@ namespace CordilleraMVC
 
             // TODO: Register your type's mappings here.
             // container.RegisterType<IProductRepository, ProductRepository>();
-        }
 
-        public static void RegisterDependencies()
-        {
-            UnityContainer unityContainer = new UnityContainer();
-
+            //Context
+            container.RegisterType<DbContext, CordilleraContext>(new HierarchicalLifetimeManager());
             //Repository
-            unityContainer.RegisterType<IEmpleadoRepository, EmpleadoRepository>(new HierarchicalLifetimeManager());
-            unityContainer.RegisterType<IClienteRepository, ClienteRepository>(new HierarchicalLifetimeManager());
-            unityContainer.RegisterType<IProductoRepository, ProductoRepository>(new HierarchicalLifetimeManager());
-            unityContainer.RegisterType<IOrdenRepository, OrdenRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IEmpleadoRepository, EmpleadoRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IClienteRepository, ClienteRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IProductoRepository, ProductoRepository>(new HierarchicalLifetimeManager());
+            container.RegisterType<IOrdenRepository, OrdenRepository>(new HierarchicalLifetimeManager());
             //Service
-            unityContainer.RegisterType<IEmpleadoService, EmpleadoServiceImpl>(new HierarchicalLifetimeManager());
-            unityContainer.RegisterType<IClienteService, ClienteServiceImpl>(new HierarchicalLifetimeManager());
-            unityContainer.RegisterType<IProductoService, ProductoServiceImpl>(new HierarchicalLifetimeManager());
-            unityContainer.RegisterType<IOrdenService, OrdenServiceImpl>(new HierarchicalLifetimeManager());
+            container.RegisterType<IEmpleadoService, EmpleadoServiceImpl>(new HierarchicalLifetimeManager());
+            container.RegisterType<IClienteService, ClienteServiceImpl>(new HierarchicalLifetimeManager());
+            container.RegisterType<IProductoService, ProductoServiceImpl>(new HierarchicalLifetimeManager());
+            container.RegisterType<IOrdenService, OrdenServiceImpl>(new HierarchicalLifetimeManager());
 
-            DependencyResolver.SetResolver(new UnityDependencyResolver(unityContainer));
+            DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
     }
 }

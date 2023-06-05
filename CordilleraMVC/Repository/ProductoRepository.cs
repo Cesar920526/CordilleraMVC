@@ -6,7 +6,7 @@ using System.Web;
 
 namespace CordilleraMVC.Repository
 {
-    public class ProductoRepository : IProductoRepository
+    public class ProductoRepository : IProductoRepository, IDisposable
     {
         public void ActualizarProducto(Producto producto)
         {
@@ -24,6 +24,11 @@ namespace CordilleraMVC.Repository
         }
 
         public List<Producto> BuscarProductoPorNombre(string nombre)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Dispose()
         {
             throw new NotImplementedException();
         }
