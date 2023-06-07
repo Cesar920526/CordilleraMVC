@@ -1,4 +1,6 @@
-﻿using CordilleraMVC.Models;
+﻿using CordilleraMVC.Data;
+using CordilleraMVC.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,61 +8,84 @@ using System.Web;
 
 namespace CordilleraMVC.Repository
 {
-    public class ProductoRepository : IProductoRepository, IDisposable
+    public class ProductoRepository : IProductoRepository
     {
+        private CordilleraContext cordilleraContext;
+
+        public ProductoRepository(CordilleraContext cordilleraContext)
+        {
+            this.cordilleraContext = cordilleraContext;
+        }   
+
         public void ActualizarProducto(Producto producto)
         {
-            throw new NotImplementedException();
+            cordilleraContext.SaveChanges();
         }
 
         public void BorrarProducto(int id)
         {
-            throw new NotImplementedException();
+            Producto producto = this.BuscarProductoPorId(id);
+            if (producto != null)
+            {
+                cordilleraContext.Productos.Remove(producto);
+                cordilleraContext.SaveChanges();
+            }
         }
 
         public Producto BuscarProductoPorId(int id)
         {
-            throw new NotImplementedException();
+            return cordilleraContext.Productos.Find(id);
         }
 
         public List<Producto> BuscarProductoPorNombre(string nombre)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
+            IEnumerable<Producto> listaProductos = from p in cordilleraContext.Productos select p;
+            IEnumerable<Producto> productos = listaProductos.Where(p => p.NombreProducto.Contains(nombre));
+            return productos.ToList();
         }
 
         public void GuardarProducto(Producto producto)
         {
-            throw new NotImplementedException();
+            cordilleraContext.Productos.Add(producto);
+            cordilleraContext.SaveChanges();
         }
 
-        public List<Producto> ListarProductos()
+        public IEnumerable<Producto> ListarProductos()
         {
-            throw new NotImplementedException();
+            return cordilleraContext.Productos;
         }
 
-        public List<Producto> ListarProductosPag(int numeroPagina, int tamañoPaginas)
+        public IPagedList ListarProductosPag(int numeroPagina, int tamañoPaginas, List<Producto> productos)
         {
-            throw new NotImplementedException();
+            IPagedList pagedList = productos.ToPagedList(numeroPagina, tamañoPaginas);
+            return pagedList;
         }
 
-        public List<Producto> OrdenDesc(int numero)
+        public IEnumerable<Producto> PorOrden(int numero)
         {
-            throw new NotImplementedException();
+            IEnumerable<Producto> listaProductos = from p in cordilleraContext.Productos select p;
+            if (numero == 1)
+            {
+                listaProductos = listaProductos.OrderByDescending(p => p.NombreProducto);
+            }
+            else if (numero == 2)
+            {
+                listaProductos = listaProductos.OrderByDescending(p => p.Precio);
+            }
+            else if (numero == 3)
+            {
+                listaProductos = listaProductos.OrderBy(p => p.Precio);
+            }
+            else if (numero == 4)
+            {
+                listaProductos = listaProductos.OrderBy(p => p.NombreProducto);
+            }
+            return listaProductos;
         }
 
-        public List<Producto> PorOrden(int numero)
+        public void Guardar()
         {
-            throw new NotImplementedException();
-        }
-
-        public void Save()
-        {
-            throw new NotImplementedException();
+            cordilleraContext.SaveChanges();
         }
     }
 }

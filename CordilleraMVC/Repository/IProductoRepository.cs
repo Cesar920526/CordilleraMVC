@@ -1,4 +1,5 @@
 ﻿using CordilleraMVC.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,15 +9,14 @@ namespace CordilleraMVC.Repository
 {
     public interface IProductoRepository
     {
-        List<Producto> ListarProductos();
-        List<Producto> ListarProductosPag(int numeroPagina, int tamañoPaginas);
+        IEnumerable<Producto> ListarProductos();
+        IPagedList ListarProductosPag(int numeroPagina, int tamañoPaginas, List<Producto> productos);
         Producto BuscarProductoPorId(int id);
         List<Producto> BuscarProductoPorNombre(string nombre);
         void GuardarProducto(Producto producto);
         void BorrarProducto(int id);
         void ActualizarProducto(Producto producto);
-        List<Producto> OrdenDesc(int numero);
-        List<Producto> PorOrden(int numero);
-        void Save();
+        IEnumerable<Producto> PorOrden(int numero);
+        void Guardar();
     }
 }
