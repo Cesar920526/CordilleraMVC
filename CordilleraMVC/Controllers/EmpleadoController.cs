@@ -1,16 +1,11 @@
-﻿using System;
+﻿using CordilleraMVC.Data;
+using CordilleraMVC.Models;
+using CordilleraMVC.Services;
+using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.Entity;
-using System.Linq;
 using System.Net;
-using System.Web;
 using System.Web.Mvc;
-using CordilleraMVC.Data;
-using CordilleraMVC.Models;
-using CordilleraMVC.Repository;
-using CordilleraMVC.Services;
-using CordilleraMVC.Implements;
 
 namespace CordilleraMVC.Controllers
 {
@@ -18,7 +13,7 @@ namespace CordilleraMVC.Controllers
     {
         private IEmpleadoService empleadoService;
         private ModelStateDictionary modelState;
-        private CordilleraContext db = new CordilleraContext();
+        //private CordilleraContext db = new CordilleraContext();
 
         public EmpleadoController(IEmpleadoService empleadoService)
         {
@@ -26,10 +21,19 @@ namespace CordilleraMVC.Controllers
         }
 
         // GET: Empleado
-        public ActionResult Index()
+        public ActionResult Index(string sortOrder, string currentFilter, string searchString, int? page)
         {
-            var empleados = empleadoService.ListaEmpleados();
-            return View(empleados);
+            ViewBag.CurrentFilter = sortOrder;
+            ViewBag.NombreSortParm = String.IsNullOrEmpty(sortOrder) ? "nombre_desc" : "";
+            ViewBag.CargoSortParm = String.IsNullOrEmpty(sortOrder) ? "cargo_desc" : "Cargo";
+            
+            List<Empleado> empleados;
+            
+            ViewBag.CurrentFilter = empleadoService.AsignacionString(currentFilter, searchString);
+            empleados = empleadoService.BuscarPorNombre(searchString);
+            empleados = empleadoService.PorOrden(sortOrder);
+            var empleadoPaged = empleadoService.ListarEmpleadosPag(currentFilter, searchString, page, empleados);
+            return View(empleadoPaged);
         }
 
         // GET: Empleado/Details/5
@@ -142,15 +146,6 @@ namespace CordilleraMVC.Controllers
                 return RedirectToAction("Delete", new { id = id, saveChangesError = true });
             }
             return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                db.Dispose();
-            }
-            base.Dispose(disposing);
         }
     }
 }

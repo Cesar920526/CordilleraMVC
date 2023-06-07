@@ -1,18 +1,18 @@
 ﻿using CordilleraMVC.Models;
 using CordilleraMVC.Repository;
 using CordilleraMVC.Services;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace CordilleraMVC.Implements
 {
     public class EmpleadoServiceImpl : IEmpleadoService
     {
-        private IEmpleadoRepository empleadoRepository;
+        private readonly IEmpleadoRepository empleadoRepository;
 
         public EmpleadoServiceImpl(IEmpleadoRepository empleadoRepository)
         {
@@ -81,7 +81,7 @@ namespace CordilleraMVC.Implements
             return empleados.ToList();
         }
 
-        public List<Empleado> ListarEmpleadosPag(string filtroActual, string nombreBusqueda, int? pagina)
+        public IPagedList ListarEmpleadosPag(string filtroActual, string nombreBusqueda, int? pagina, List<Empleado> listaEmpleados)
         {
             int tamañoPaginas = 3;
             int numeroPaginas = (pagina ?? 1);
@@ -93,32 +93,34 @@ namespace CordilleraMVC.Implements
             {
                 this.AsignacionString(filtroActual, nombreBusqueda);
             }
-            return empleadoRepository.ListarEmpleadosPag(numeroPaginas, tamañoPaginas);
+            return empleadoRepository.ListarEmpleadosPag(numeroPaginas, tamañoPaginas, listaEmpleados);
         }
 
         public List<Empleado> PorOrden(string ordenSort)
         {
             List<Empleado> lista;
             int numero;
-            if (ordenSort.Equals("nombre_desc"))
+            switch (ordenSort)
             {
-                numero = 1;
-                lista = empleadoRepository.PorOrden(numero);
-            }
-            else if (ordenSort.Equals("cargo_desc"))
-            {
-                numero = 2;
-                lista = empleadoRepository.PorOrden(numero);
-            }
-            else if (ordenSort.Equals("Cargo"))
-            {
-                numero = 3;
-                lista = empleadoRepository.PorOrden(numero);
-            }
-            else
-            {
-                numero = 4;
-                lista = empleadoRepository.PorOrden(numero);
+                case "nombre_desc":
+                    numero = 1;
+                    lista = empleadoRepository.PorOrden(numero).ToList();
+                    break;
+
+                case "cargo_desc":
+                    numero = 2;
+                    lista = empleadoRepository.PorOrden(numero).ToList();
+                    break;
+
+                case "Cargo":
+                    numero = 3;
+                    lista = empleadoRepository.PorOrden(numero).ToList();
+                    break;
+
+                default:
+                    numero = 4;
+                    lista = empleadoRepository.PorOrden(numero).ToList();
+                    break;
             }
             return lista;
         }

@@ -1,8 +1,10 @@
 ﻿using CordilleraMVC.Models;
 using CordilleraMVC.Repository;
 using CordilleraMVC.Services;
+using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
@@ -11,71 +13,126 @@ namespace CordilleraMVC.Implements
 {
     public class ClienteServiceImpl : IClienteService
     {
-        private ModelStateDictionary modelState;
-        private IClienteRepository usuarioRepository;
+        private IClienteRepository clienteRepository;
 
-        public ClienteServiceImpl(ModelStateDictionary modelState, IClienteRepository usuarioRepository)
+        public ClienteServiceImpl(IClienteRepository clienteRepository)
         {
-            this.modelState = modelState;
-            this.usuarioRepository = usuarioRepository;
+            this.clienteRepository = clienteRepository;
         }
 
-        public bool ActualizarCliente(Cliente usuario)
+        public bool ActualizarCliente(ModelStateDictionary modelState)
         {
             try
             {
-                usuarioRepository.ActualizarCliente(usuario);
+                clienteRepository.Guardar();
                 return true;
             }
-            catch
+            catch (DataException)
             {
+                modelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente, y si el error persiste contacte al administrador.");
                 return false;
             }
         }
 
+        public string AsignacionString(string filtroActual, string nombreBusqueda)
+        {
+            if (nombreBusqueda == null)
+            {
+                nombreBusqueda = filtroActual;
+            }
+            return nombreBusqueda;
+        }
+
         public void BorrarCliente(int id)
         {
-            throw new NotImplementedException();
+            clienteRepository.BorrarCliente(id);
         }
 
         public Cliente BuscarPorId(int id)
         {
-            throw new NotImplementedException();
+            return clienteRepository.BuscarPorId(id);
         }
 
         public List<Cliente> BuscarPorNombre(string nombre)
         {
-            throw new NotImplementedException();
+            List<Cliente> clientePorNombre = null;
+            if (!String.IsNullOrEmpty(nombre))
+            {
+                clientePorNombre = clienteRepository.BuscarPorNombre(nombre);
+            }
+            return clientePorNombre;
         }
 
         public void Guardar()
         {
-            throw new NotImplementedException();
+            clienteRepository.Guardar();
         }
 
-        public bool GuardarCliente(Cliente usuario)
+        public bool GuardarCliente(Cliente cliente, ModelStateDictionary modelState)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (modelState.IsValid)
+                {
+                    clienteRepository.GuardarCliente(cliente);
+                }
+                return true;
+            }
+            catch (DataException)
+            {
+                modelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente, y si el error persiste contacte al administrador.");
+                return false;
+            }
         }
 
         public List<Cliente> ListarClientes()
         {
-            throw new NotImplementedException();
+            IEnumerable<Cliente> clientes = clienteRepository.ListarClientes();
+            return clientes.ToList();
         }
 
-        public List<Cliente> ListarClientesPag(int numeroPagina, int tamañoPaginas)
+        public IPagedList ListarClientesPag(string filtroActual, string nombreBusqueda, int? pagina, List<Cliente> listaClientes)
         {
-            throw new NotImplementedException();
+            int tamañoPaginas = 3;
+            int numeroPaginas = (pagina ?? 1);
+            if (nombreBusqueda != null)
+            {
+                pagina = 1;
+            }
+            else
+            {
+                this.AsignacionString(filtroActual, nombreBusqueda);
+            }
+            return clienteRepository.ListarClientesPag(numeroPaginas, tamañoPaginas, listaClientes);
         }
 
-        public List<Cliente> OrdenDesc(int numero)
+        public List<Cliente> PorOrden(string ordenSort)
         {
-            throw new NotImplementedException();
-        }
+            List<Cliente> lista;
+            int numero;
+            switch (ordenSort)
+            {
+                case "nombre_desc":
+                    numero = 1;
+                    lista = clienteRepository.PorOrden(numero).ToList();
+                    break;
 
-        public List<Cliente> PorOrden(int numero)
-        {
-            throw new NotImplementedException();
+                case "ciudad_desc":
+                    numero = 2;
+                    lista = clienteRepository.PorOrden(numero).ToList();
+                    break;
+
+                case "Ciudad":
+                    numero = 3;
+                    lista = clienteRepository.PorOrden(numero).ToList();
+                    break;
+
+                default:
+                    numero = 4;
+                    lista = clienteRepository.PorOrden(numero).ToList();
+                    break;
+            }
+            return lista;
         }
     }
 }

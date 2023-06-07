@@ -1,4 +1,6 @@
-﻿using CordilleraMVC.Models;
+﻿using CordilleraMVC.Data;
+using CordilleraMVC.Models;
+using PagedList;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,61 +8,84 @@ using System.Web;
 
 namespace CordilleraMVC.Repository
 {
-    public class ClienteRepository : IClienteRepository, IDisposable
+    public class ClienteRepository : IClienteRepository
     {
+        private CordilleraContext cordilleraContext;
+
+        public ClienteRepository(CordilleraContext cordilleraContext)
+        {
+            this.cordilleraContext = cordilleraContext;
+        }
+
         public void ActualizarCliente(Cliente cliente)
         {
-            throw new NotImplementedException();
+            cordilleraContext.SaveChanges();
         }
 
         public void BorrarCliente(int id)
         {
-            throw new NotImplementedException();
+            Cliente cliente = this.BuscarPorId(id);
+            if (cliente != null)
+            {
+                cordilleraContext.Clientes.Remove(cliente);
+                cordilleraContext.SaveChanges();
+            }
         }
 
         public Cliente BuscarPorId(int id)
         {
-            throw new NotImplementedException();
+            return cordilleraContext.Clientes.Find(id);
         }
 
         public List<Cliente> BuscarPorNombre(string nombre)
         {
-            throw new NotImplementedException();
-        }
-
-        public void Dispose()
-        {
-            throw new NotImplementedException();
+            IEnumerable<Cliente> ListaClientes = from c in cordilleraContext.Clientes select c;
+            IEnumerable<Cliente> clientes = ListaClientes.Where(c => c.Nombre.Contains(nombre) || c.Apellido.Contains(nombre));
+            return clientes.ToList();
         }
 
         public void Guardar()
         {
-            throw new NotImplementedException();
+            cordilleraContext.SaveChanges();
         }
 
         public void GuardarCliente(Cliente cliente)
         {
-            throw new NotImplementedException();
+            cordilleraContext.Clientes.Add(cliente);
+            cordilleraContext.SaveChanges();
         }
 
-        public List<Cliente> ListarClientes()
+        public IEnumerable<Cliente> ListarClientes()
         {
-            throw new NotImplementedException();
+            return cordilleraContext.Clientes;
         }
 
-        public List<Cliente> ListarClientesPag(int numeroPagina, int tamañoPaginas)
+        public IPagedList ListarClientesPag(int numeroPagina, int tamañoPaginas, List<Cliente> listaClientes)
         {
-            throw new NotImplementedException();
+            IPagedList pagedList = listaClientes.ToPagedList(numeroPagina, tamañoPaginas);
+            return pagedList;
         }
 
-        public List<Cliente> OrdenDesc(int numero)
+        public IEnumerable<Cliente> PorOrden(int numero)
         {
-            throw new NotImplementedException();
-        }
-
-        public List<Cliente> PorOrden(int numero)
-        {
-            throw new NotImplementedException();
+            IEnumerable<Cliente> listaClientes = from c in cordilleraContext.Clientes select c;
+            if (numero == 1)
+            {
+                listaClientes = listaClientes.OrderByDescending(c => c.Apellido);
+            }
+            else if (numero == 2)
+            {
+                listaClientes = listaClientes.OrderByDescending(c => c.Ciudad);
+            }
+            else if (numero == 3)
+            {
+                listaClientes = listaClientes.OrderBy(c => c.Ciudad);
+            }
+            else if (numero == 4)
+            {
+                listaClientes = listaClientes.OrderBy(c => c.Apellido);
+            }
+            return listaClientes;
         }
     }
 }

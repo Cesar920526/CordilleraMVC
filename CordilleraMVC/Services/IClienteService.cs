@@ -1,23 +1,21 @@
 ﻿using CordilleraMVC.Models;
-using System;
+using PagedList;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web.Mvc;
 
 namespace CordilleraMVC.Services
 {
     public interface IClienteService
     {
         List<Cliente> ListarClientes();
-        List<Cliente> ListarClientesPag(int numeroPagina, int tamañoPaginas);
+        IPagedList ListarClientesPag(string filtroActual, string nombreBusqueda, int? pagina, List<Cliente> listaClientes);
         Cliente BuscarPorId(int id);
         List<Cliente> BuscarPorNombre(string nombre);
-        bool GuardarCliente(Cliente cliente);
+        bool GuardarCliente(Cliente cliente, ModelStateDictionary modelState);
         void BorrarCliente(int id);
-        bool ActualizarCliente(Cliente cliente);
-        List<Cliente> OrdenDesc(int numero);
-        List<Cliente> PorOrden(int numero);
+        bool ActualizarCliente(ModelStateDictionary modelState);
+        List<Cliente> PorOrden(string ordenSort);
         void Guardar();
+        string AsignacionString(string filtroActual, string nombreBusqueda);
     }
 }

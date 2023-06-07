@@ -1,16 +1,13 @@
 ﻿using CordilleraMVC.Data;
 using CordilleraMVC.Models;
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using PagedList;
-using System.Web;
 
 namespace CordilleraMVC.Repository
 {
-    public class EmpleadoRepository : IEmpleadoRepository, IDisposable
+    public class EmpleadoRepository : IEmpleadoRepository
     {
         private CordilleraContext cordilleraContext;
 
@@ -46,11 +43,6 @@ namespace CordilleraMVC.Repository
             return empleados.ToList();
         }
 
-        public void Dispose()
-        {
-            cordilleraContext.Dispose();
-        }
-
         public void Guardar()
         {
             cordilleraContext.SaveChanges();
@@ -67,13 +59,13 @@ namespace CordilleraMVC.Repository
             return cordilleraContext.Empleados;
         }
 
-        public List<Empleado> ListarEmpleadosPag(int numeroPagina, int tamañoPaginas)
+        public IPagedList ListarEmpleadosPag(int numeroPagina, int tamañoPaginas, List<Empleado> listaEmpleados)
         {
-            IEnumerable<Empleado> ListEmpleados = from e in cordilleraContext.Empleados select e;
-            return (List<Empleado>)ListEmpleados.ToList().ToPagedList(numeroPagina, tamañoPaginas);
+            IPagedList pagedList = listaEmpleados.ToPagedList(numeroPagina, tamañoPaginas);
+            return pagedList;
         }
 
-        public List<Empleado> PorOrden(int numero)
+        public IEnumerable<Empleado> PorOrden(int numero)
         {
             IEnumerable<Empleado> ListEmpleados = from e in cordilleraContext.Empleados select e;
             if(numero == 1)
@@ -92,7 +84,7 @@ namespace CordilleraMVC.Repository
             {
                 ListEmpleados = ListEmpleados.OrderBy(e => e.Apellido);
             }
-            return ListEmpleados.ToList();
+            return ListEmpleados;
         }
     }
 }
