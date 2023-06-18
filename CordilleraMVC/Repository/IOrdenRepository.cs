@@ -17,7 +17,7 @@ namespace CordilleraMVC.Repository
         void ActualizarOrden(Orden orden);
         IEnumerable<Orden> PorOrden(int numero);
         void Guardar();
-        IEnumerable<Orden> ListaDespegableEmpleado();
-        IEnumerable<Orden> ListaDespegableCliente();
+        IQueryable ListaDespegableEmpleado();
+        IQueryable ListaDespegableCliente();
     }
 }

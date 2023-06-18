@@ -20,5 +20,7 @@ namespace CordilleraMVC.Services
         List<Orden> PorOrden(string ordenSort);
         void Guardar();
         string AsignacionString(string filtroActual, string nombreBusqueda);
+        SelectList ListaDespegableEmpleado(object empleadoSeleccionado = null);
+        SelectList ListaDespegableCliente(object empleadoSeleccionado = null);
     }
 }

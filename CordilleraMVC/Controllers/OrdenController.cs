@@ -2,7 +2,6 @@
 using CordilleraMVC.Models;
 using CordilleraMVC.Services;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Net;
 using System.Web.Mvc;
 
@@ -11,6 +10,7 @@ namespace CordilleraMVC.Controllers
     public class OrdenController : Controller
     {
         private IOrdenService _ordenService;
+        private ModelStateDictionary modelState;
         private CordilleraContext db = new CordilleraContext();
 
         public OrdenController(IOrdenService ordenService)
@@ -43,8 +43,8 @@ namespace CordilleraMVC.Controllers
         // GET: Orden/Create
         public ActionResult Create()
         {
-            ViewBag.ClienteId = new SelectList(db.Clientes, "ClienteId", "Nombre");
-            ViewBag.EmpleadoId = new SelectList(db.Empleados, "EmpleadoId", "Nombre");
+            ViewBag.ClienteId = _ordenService.ListaDespegableCliente();
+            ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado();
             return View();
         }
 
@@ -55,15 +55,15 @@ namespace CordilleraMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create([Bind(Include = "OrdenId,Fecha,EmpleadoId,ClienteId")] Orden orden)
         {
-            if (ModelState.IsValid)
+            modelState = new ModelStateDictionary();
+            bool validaGuardar = _ordenService.GuardarOrden(orden, modelState);
+            if (validaGuardar)
             {
-                db.Ordenes.Add(orden);
-                db.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.ClienteId = new SelectList(db.Clientes, "ClienteId", "Nombre", orden.ClienteId);
-            ViewBag.EmpleadoId = new SelectList(db.Empleados, "EmpleadoId", "Nombre", orden.EmpleadoId);
+            ViewBag.ClienteId = _ordenService.ListaDespegableCliente(orden.ClienteId);
+            ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado(orden.EmpleadoId);
             return View(orden);
         }
 
@@ -74,31 +74,38 @@ namespace CordilleraMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Orden orden = db.Ordenes.Find(id);
+            Orden orden = _ordenService.BuscarPorId(id.Value);
             if (orden == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.ClienteId = new SelectList(db.Clientes, "ClienteId", "Nombre", orden.ClienteId);
-            ViewBag.EmpleadoId = new SelectList(db.Empleados, "EmpleadoId", "Nombre", orden.EmpleadoId);
+            ViewBag.ClienteId = _ordenService.ListaDespegableCliente(orden.ClienteId);
+            ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado(orden.EmpleadoId);
             return View(orden);
         }
 
         // POST: Orden/Edit/5
         // Para protegerse de ataques de publicación excesiva, habilite las propiedades específicas a las que quiere enlazarse. Para obtener 
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "OrdenId,Fecha,EmpleadoId,ClienteId")] Orden orden)
+        public ActionResult EditPost(int? id)
         {
-            if (ModelState.IsValid)
+            if (id == null)
             {
-                db.Entry(orden).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            ViewBag.ClienteId = new SelectList(db.Clientes, "ClienteId", "Nombre", orden.ClienteId);
-            ViewBag.EmpleadoId = new SelectList(db.Empleados, "EmpleadoId", "Nombre", orden.EmpleadoId);
+            Orden orden = _ordenService.BuscarPorId(id.Value);
+            string[] datosOrdenes = new string[] { "Fecha", "EmpleadoId", "ClienteId" };
+            if (TryUpdateModel(orden, "", datosOrdenes))
+            {
+                if (_ordenService.ActualizarOrden(modelState))
+                {
+                    return RedirectToAction("Index");
+                }
+            }
+            ViewBag.ClienteId = _ordenService.ListaDespegableCliente(orden.ClienteId);
+            ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado(orden.EmpleadoId);
             return View(orden);
         }
 

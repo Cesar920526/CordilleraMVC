@@ -20,7 +20,7 @@ namespace CordilleraMVC.Repository
 
         public void ActualizarOrden(Orden orden)
         {
-            throw new NotImplementedException();
+            cordilleraContext.SaveChanges();
         }
 
         public void BorrarOrden(int id)
@@ -30,31 +30,34 @@ namespace CordilleraMVC.Repository
 
         public Orden BuscarOrdenPorId(int id)
         {
-            throw new NotImplementedException();
+            return cordilleraContext.Ordenes.Find(id);
         }
 
         public void Guardar()
         {
-            throw new NotImplementedException();
+            cordilleraContext.SaveChanges();
         }
 
         public void GuardarOrden(Orden orden)
         {
-            throw new NotImplementedException();
+            cordilleraContext.Ordenes.Add(orden);
+            cordilleraContext.SaveChanges();
         }
 
-        public void ListaDespegableCliente()
+        public IQueryable ListaDespegableCliente()
         {
-            var ordenes = from c in cordilleraContext.Clientes
+            IQueryable clientes = from c in cordilleraContext.Clientes
                           orderby c.Nombre
                           select c;
+            return clientes;
         }
 
-        public void ListaDespegableEmpleado()
+        public IQueryable ListaDespegableEmpleado()
         {
-            var ordenes = from o in cordilleraContext.Empleados
-                                         orderby o.Nombre
-                                         select o;
+            IQueryable empleados = from e in cordilleraContext.Empleados
+                          orderby e.Nombre
+                          select e;
+            return empleados;
         }
 
         public IEnumerable<Orden> ListarOrdenes()

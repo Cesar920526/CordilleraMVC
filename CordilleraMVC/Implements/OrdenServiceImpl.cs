@@ -4,8 +4,9 @@ using CordilleraMVC.Services;
 using PagedList;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.Entity.Infrastructure;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 
 namespace CordilleraMVC.Implements
@@ -21,7 +22,16 @@ namespace CordilleraMVC.Implements
 
         public bool ActualizarOrden(ModelStateDictionary modelState)
         {
-            throw new NotImplementedException();
+            try
+            {
+                ordenRepository.Guardar();
+                return true;
+            }
+            catch (DataException)
+            {
+                modelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente, y si el error persiste contacte al administrador.");
+                return false;
+            }
         }
 
         public string AsignacionString(string filtroActual, string nombreBusqueda)
@@ -36,17 +46,43 @@ namespace CordilleraMVC.Implements
 
         public Orden BuscarPorId(int id)
         {
-            throw new NotImplementedException();
+            return ordenRepository.BuscarOrdenPorId(id);
         }
 
         public void Guardar()
         {
-            throw new NotImplementedException();
+            ordenRepository.Guardar();
         }
 
         public bool GuardarOrden(Orden orden, ModelStateDictionary modelState)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (modelState.IsValid)
+                {
+                    ordenRepository.GuardarOrden(orden);
+                }
+                return true;
+            }
+            catch (RetryLimitExceededException)
+            {
+                modelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente, y si el error persiste contacte al administrador.");
+                return false;
+            }
+        }
+
+        public SelectList ListaDespegableCliente(object clienteSeleccionado = null)
+        {
+            IQueryable listaClientes = ordenRepository.ListaDespegableCliente();
+            SelectList clienteID = new SelectList(listaClientes, "ClienteId", "Nombre", clienteSeleccionado);
+            return clienteID;
+        }
+
+        public SelectList ListaDespegableEmpleado(object empleadoSeleccionado = null)
+        {
+            IQueryable listaEmpleados = ordenRepository.ListaDespegableEmpleado();
+            SelectList empleadoID = new SelectList(listaEmpleados, "EmpleadoId", "Nombre", empleadoSeleccionado);
+            return empleadoID;
         }
 
         public List<Orden> ListaOrdenes()
