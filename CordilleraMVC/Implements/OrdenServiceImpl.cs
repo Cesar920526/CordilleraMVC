@@ -41,7 +41,7 @@ namespace CordilleraMVC.Implements
 
         public void BorrarOrden(int id)
         {
-            throw new NotImplementedException();
+            ordenRepository.BorrarOrden(id);
         }
 
         public Orden BuscarPorId(int id)

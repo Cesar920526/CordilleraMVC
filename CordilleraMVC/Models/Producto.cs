@@ -19,6 +19,7 @@ namespace CordilleraMVC.Models
         public string Descripcion { get; set; }
         [Required]
         public double Precio { get; set; }
+        public virtual ICollection<Orden> Ordenes { get; set; }
 
     }
 }

@@ -25,7 +25,12 @@ namespace CordilleraMVC.Repository
 
         public void BorrarOrden(int id)
         {
-            throw new NotImplementedException();
+            Orden orden = this.BuscarOrdenPorId(id);
+            if(orden != null)
+            {
+                cordilleraContext.Ordenes.Remove(orden);
+                cordilleraContext.SaveChanges();
+            }
         }
 
         public Orden BuscarOrdenPorId(int id)

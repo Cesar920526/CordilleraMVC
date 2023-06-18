@@ -2,6 +2,7 @@
 using CordilleraMVC.Models;
 using CordilleraMVC.Services;
 using System.Collections.Generic;
+using System.Data;
 using System.Net;
 using System.Web.Mvc;
 
@@ -32,7 +33,7 @@ namespace CordilleraMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Orden orden = db.Ordenes.Find(id);
+            Orden orden = _ordenService.BuscarPorId(id.Value);
             if (orden == null)
             {
                 return HttpNotFound();
@@ -110,13 +111,17 @@ namespace CordilleraMVC.Controllers
         }
 
         // GET: Orden/Delete/5
-        public ActionResult Delete(int? id)
+        public ActionResult Delete(int? id, bool? saveChangesError = false)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Orden orden = db.Ordenes.Find(id);
+            if (saveChangesError.GetValueOrDefault())
+            {
+                ViewBag.ErrorMessage = "Borrado fallido, Intente nuevamente, y si el error persiste contacte al administrador.";
+            }
+            Orden orden = _ordenService.BuscarPorId(id.Value);
             if (orden == null)
             {
                 return HttpNotFound();
@@ -129,19 +134,16 @@ namespace CordilleraMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            Orden orden = db.Ordenes.Find(id);
-            db.Ordenes.Remove(orden);
-            db.SaveChanges();
-            return RedirectToAction("Index");
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
+            try
             {
-                db.Dispose();
+                Orden orden = _ordenService.BuscarPorId(id);
+                _ordenService.BorrarOrden(id);
             }
-            base.Dispose(disposing);
+            catch (DataException)
+            {
+                return RedirectToAction("Delete", new {id = id, saveChangesError = true});
+            }
+            return RedirectToAction("Index");
         }
     }
 }
