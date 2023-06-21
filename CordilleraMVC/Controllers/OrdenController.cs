@@ -44,8 +44,11 @@ namespace CordilleraMVC.Controllers
         // GET: Orden/Create
         public ActionResult Create()
         {
+            Orden orden = new Orden();
+            orden.Productos = new List<Producto>();
             ViewBag.ClienteId = _ordenService.ListaDespegableCliente();
             ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado();
+            ViewBag.Productos = _ordenService.TraerDatosProductos(orden);
             return View();
         }
 
@@ -54,10 +57,10 @@ namespace CordilleraMVC.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "OrdenId,Fecha,EmpleadoId,ClienteId")] Orden orden)
+        public ActionResult Create([Bind(Include = "OrdenId,Fecha,EmpleadoId,ClienteId")] Orden orden, string[] productosSeleccionados)
         {
             modelState = new ModelStateDictionary();
-            bool validaGuardar = _ordenService.GuardarOrden(orden, modelState);
+            bool validaGuardar = _ordenService.GuardarOrden(orden, modelState, productosSeleccionados);
             if (validaGuardar)
             {
                 return RedirectToAction("Index");
@@ -65,6 +68,7 @@ namespace CordilleraMVC.Controllers
 
             ViewBag.ClienteId = _ordenService.ListaDespegableCliente(orden.ClienteId);
             ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado(orden.EmpleadoId);
+            ViewBag.Productos = _ordenService.TraerDatosProductos(orden);
             return View(orden);
         }
 
@@ -75,13 +79,14 @@ namespace CordilleraMVC.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Orden orden = _ordenService.BuscarPorId(id.Value);
+            Orden orden = _ordenService.BuscarConProductos(id.Value);
             if (orden == null)
             {
                 return HttpNotFound();
             }
             ViewBag.ClienteId = _ordenService.ListaDespegableCliente(orden.ClienteId);
             ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado(orden.EmpleadoId);
+            ViewBag.Productos = _ordenService.TraerDatosProductos(orden);
             return View(orden);
         }
 
@@ -90,23 +95,24 @@ namespace CordilleraMVC.Controllers
         // más detalles, vea https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost, ActionName("Edit")]
         [ValidateAntiForgeryToken]
-        public ActionResult EditPost(int? id)
+        public ActionResult EditPost(int? id, string[] productosSeleccionados)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Orden orden = _ordenService.BuscarPorId(id.Value);
+            Orden orden = _ordenService.BuscarConProductos(id.Value);
             string[] datosOrdenes = new string[] { "Fecha", "EmpleadoId", "ClienteId" };
             if (TryUpdateModel(orden, "", datosOrdenes))
             {
-                if (_ordenService.ActualizarOrden(modelState))
+                if (_ordenService.ActualizarOrden(productosSeleccionados, orden, modelState))
                 {
                     return RedirectToAction("Index");
                 }
             }
             ViewBag.ClienteId = _ordenService.ListaDespegableCliente(orden.ClienteId);
             ViewBag.EmpleadoId = _ordenService.ListaDespegableEmpleado(orden.EmpleadoId);
+            ViewBag.Productos = _ordenService.TraerDatosProductos(orden);
             return View(orden);
         }
 

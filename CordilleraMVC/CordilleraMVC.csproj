@@ -236,6 +236,7 @@
     <Compile Include="Services\IOrdenService.cs" />
     <Compile Include="Services\IProductoService.cs" />
     <Compile Include="Services\IClienteService.cs" />
+    <Compile Include="ViewModels\ProductoAsignado.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />

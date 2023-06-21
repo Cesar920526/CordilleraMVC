@@ -1,6 +1,7 @@
 ﻿using CordilleraMVC.Models;
 using CordilleraMVC.Repository;
 using CordilleraMVC.Services;
+using CordilleraMVC.ViewModels;
 using PagedList;
 using System;
 using System.Collections.Generic;
@@ -14,16 +15,43 @@ namespace CordilleraMVC.Implements
     public class OrdenServiceImpl : IOrdenService
     {
         private IOrdenRepository ordenRepository;
+        private IProductoRepository productoRepository;
 
-        public OrdenServiceImpl(IOrdenRepository ordenRepository)
+        public OrdenServiceImpl(IOrdenRepository ordenRepository, IProductoRepository productoRepository)
         {
             this.ordenRepository = ordenRepository;
+            this.productoRepository = productoRepository;
         }
 
-        public bool ActualizarOrden(ModelStateDictionary modelState)
+        public bool ActualizarOrden(string[] productosSeleccionados, Orden orden, ModelStateDictionary modelState)
         {
             try
             {
+                if(productosSeleccionados == null)
+                {
+                    orden.Productos = new List<Producto>();
+                    return true;
+                }
+
+                HashSet<string> psHS = new HashSet<string>(productosSeleccionados);
+                HashSet<int> ordenProductos = ordenRepository.OrdenProductos(orden);
+                foreach(Producto p in productoRepository.TodosProductos())
+                {
+                    if (psHS.Contains(p.ProductoId.ToString()))
+                    {
+                        if(!ordenProductos.Contains(p.ProductoId))
+                        {
+                            orden.Productos.Add(p);
+                        }
+                    }
+                    else
+                    {
+                        if (ordenProductos.Contains(p.ProductoId))
+                        {
+                            orden.Productos.Remove(p);
+                        }
+                    }
+                }
                 ordenRepository.Guardar();
                 return true;
             }
@@ -44,6 +72,11 @@ namespace CordilleraMVC.Implements
             ordenRepository.BorrarOrden(id);
         }
 
+        public Orden BuscarConProductos(int id)
+        {
+            return ordenRepository.BuscarOrdenConProductos(id);
+        }
+
         public Orden BuscarPorId(int id)
         {
             return ordenRepository.BuscarOrdenPorId(id);
@@ -54,10 +87,19 @@ namespace CordilleraMVC.Implements
             ordenRepository.Guardar();
         }
 
-        public bool GuardarOrden(Orden orden, ModelStateDictionary modelState)
+        public bool GuardarOrden(Orden orden, ModelStateDictionary modelState, string[] productosSeleccionados)
         {
             try
             {
+                if(productosSeleccionados != null)
+                {
+                    orden.Productos = new List<Producto>();
+                    foreach(string producto in productosSeleccionados)
+                    {
+                        Producto productos = productoRepository.BuscarProductoPorId(int.Parse(producto));
+                        orden.Productos.Add(productos);
+                    }
+                }
                 if (modelState.IsValid)
                 {
                     ordenRepository.GuardarOrden(orden);
@@ -99,6 +141,23 @@ namespace CordilleraMVC.Implements
         public List<Orden> PorOrden(string ordenSort)
         {
             throw new NotImplementedException();
+        }
+
+        public List<ProductoAsignado> TraerDatosProductos(Orden orden)
+        {
+            List<Producto> productosTodos = productoRepository.TodosProductos().ToList();
+            HashSet<int> ordenProductos = new HashSet<int>(ordenRepository.OrdenProductos(orden));
+            List<ProductoAsignado> viewModel = new List<ProductoAsignado>();
+            foreach(Producto p in productosTodos)
+            {
+                viewModel.Add(new ProductoAsignado
+                {
+                    ProductoId = p.ProductoId,
+                    NombreProducto = p.NombreProducto,
+                    Asignado = ordenProductos.Contains(p.ProductoId)
+                });
+            }
+            return viewModel;
         }
     }
 }
