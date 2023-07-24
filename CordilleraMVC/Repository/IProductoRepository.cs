@@ -18,6 +18,5 @@ namespace CordilleraMVC.Repository
         void ActualizarProducto(Producto producto);
         IEnumerable<Producto> PorOrden(int numero);
         void Guardar();
-        IEnumerable<Producto> TodosProductos();
     }
 }

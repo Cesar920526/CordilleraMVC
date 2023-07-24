@@ -1,10 +1,6 @@
 ﻿using CordilleraMVC.Models;
-using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.ModelConfiguration.Conventions;
-using System.Linq;
-using System.Web;
 
 namespace CordilleraMVC.Data
 {
@@ -20,6 +16,12 @@ namespace CordilleraMVC.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Conventions.Remove<PluralizingTableNameConvention>();
+
+            modelBuilder.Entity<Producto>()
+                .HasMany(p => p.Ordenes).WithMany(o => o.Productos)
+                .Map(t => t.MapLeftKey("ProductoId")
+                    .MapRightKey("OrdenId")
+                    .ToTable("ProductoOrden"));
         }
     }
 }

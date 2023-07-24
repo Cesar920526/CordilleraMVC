@@ -15,43 +15,19 @@ namespace CordilleraMVC.Implements
     public class OrdenServiceImpl : IOrdenService
     {
         private IOrdenRepository ordenRepository;
-        private IProductoRepository productoRepository;
+        private IProductoService productoService;
 
-        public OrdenServiceImpl(IOrdenRepository ordenRepository, IProductoRepository productoRepository)
+        public OrdenServiceImpl(IOrdenRepository ordenRepository, IProductoService productoService)
         {
             this.ordenRepository = ordenRepository;
-            this.productoRepository = productoRepository;
+            this.productoService = productoService;
         }
 
         public bool ActualizarOrden(string[] productosSeleccionados, Orden orden, ModelStateDictionary modelState)
         {
             try
             {
-                if(productosSeleccionados == null)
-                {
-                    orden.Productos = new List<Producto>();
-                    return true;
-                }
-
-                HashSet<string> psHS = new HashSet<string>(productosSeleccionados);
-                HashSet<int> ordenProductos = ordenRepository.OrdenProductos(orden);
-                foreach(Producto p in productoRepository.TodosProductos())
-                {
-                    if (psHS.Contains(p.ProductoId.ToString()))
-                    {
-                        if(!ordenProductos.Contains(p.ProductoId))
-                        {
-                            orden.Productos.Add(p);
-                        }
-                    }
-                    else
-                    {
-                        if (ordenProductos.Contains(p.ProductoId))
-                        {
-                            orden.Productos.Remove(p);
-                        }
-                    }
-                }
+                ActualizaOrdenProducto(productosSeleccionados, orden);
                 ordenRepository.Guardar();
                 return true;
             }
@@ -59,6 +35,36 @@ namespace CordilleraMVC.Implements
             {
                 modelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente, y si el error persiste contacte al administrador.");
                 return false;
+            }
+        }
+
+        private void ActualizaOrdenProducto(string[] productosSeleccionados, Orden orden)
+        {
+            if (productosSeleccionados == null)
+            {
+                orden.Productos = new List<Producto>();
+                return;
+            }
+
+            HashSet<string> psHS = new HashSet<string>(productosSeleccionados);
+            HashSet<int> ordenProductos = ordenRepository.OrdenProductos(orden);
+            List<Producto> productos = productoService.ListaProductos();
+            foreach (Producto p in productos)
+            {
+                if (psHS.Contains(p.ProductoId.ToString()))
+                {
+                    if (!ordenProductos.Contains(p.ProductoId))
+                    {
+                        orden.Productos.Add(p);
+                    }
+                }
+                else
+                {
+                    if (ordenProductos.Contains(p.ProductoId))
+                    {
+                        orden.Productos.Remove(p);
+                    }
+                }
             }
         }
 
@@ -96,7 +102,7 @@ namespace CordilleraMVC.Implements
                     orden.Productos = new List<Producto>();
                     foreach(string producto in productosSeleccionados)
                     {
-                        Producto productos = productoRepository.BuscarProductoPorId(int.Parse(producto));
+                        Producto productos = productoService.BuscarPorId(int.Parse(producto));
                         orden.Productos.Add(productos);
                     }
                 }
@@ -145,7 +151,7 @@ namespace CordilleraMVC.Implements
 
         public List<ProductoAsignado> TraerDatosProductos(Orden orden)
         {
-            List<Producto> productosTodos = productoRepository.TodosProductos().ToList();
+            List<Producto> productosTodos = productoService.ListaProductos();
             HashSet<int> ordenProductos = new HashSet<int>(ordenRepository.OrdenProductos(orden));
             List<ProductoAsignado> viewModel = new List<ProductoAsignado>();
             foreach(Producto p in productosTodos)

@@ -12,7 +12,6 @@ namespace CordilleraMVC.Controllers
     {
         private IOrdenService _ordenService;
         private ModelStateDictionary modelState;
-        private CordilleraContext db = new CordilleraContext();
 
         public OrdenController(IOrdenService ordenService)
         {

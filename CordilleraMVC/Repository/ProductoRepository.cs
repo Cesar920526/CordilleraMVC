@@ -87,10 +87,5 @@ namespace CordilleraMVC.Repository
         {
             cordilleraContext.SaveChanges();
         }
-
-        public IEnumerable<Producto> TodosProductos()
-        {
-            return cordilleraContext.Productos;
-        }
     }
 }

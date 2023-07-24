@@ -218,6 +218,10 @@
     <Compile Include="Migrations\202306181611019_Initial1.designer.cs">
       <DependentUpon>202306181611019_Initial1.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\202307032113007_Initial2.cs" />
+    <Compile Include="Migrations\202307032113007_Initial2.designer.cs">
+      <DependentUpon>202307032113007_Initial2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\Empleado.cs" />
     <Compile Include="Models\Orden.cs" />
@@ -347,6 +351,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\202306181611019_Initial1.resx">
       <DependentUpon>202306181611019_Initial1.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\202307032113007_Initial2.resx">
+      <DependentUpon>202307032113007_Initial2.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
